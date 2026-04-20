@@ -400,13 +400,26 @@ function hideCustomError() {
 }
 
 // 计算格子尺寸（根据行列数动态调整）
+// 确保：随着行列数增加，棋盘总面积不会缩小
 function calculateCellSize(rows, cols) {
+    const maxCellSize = 36;
+    const minCellSize = 16;
     const maxCells = Math.max(rows, cols);
-    if (maxCells <= 10) return 36;
-    if (maxCells <= 16) return 28;
-    if (maxCells <= 20) return 24;
-    if (maxCells <= 30) return 20;
-    return 16;
+    
+    // 每6个格子减少1个像素，下降速度足够慢
+    // 确保在常用范围内（maxCells ≤ 31）棋盘大小严格递增
+    // 验证：
+    // 10×10: 36 - floor(9/6) = 35px → 10×35 = 350px
+    // 11×11: 36 - floor(10/6) = 35px → 11×35 = 385px ✓
+    // 16×16: 36 - floor(15/6) = 34px → 16×34 = 544px ✓
+    // 20×20: 36 - floor(19/6) = 33px → 20×33 = 660px ✓
+    // 30×30: 36 - floor(29/6) = 32px → 30×32 = 960px ✓
+    // 50×50: 36 - floor(49/6) = 28px → 50×28 = 1400px
+    
+    let cellSize = maxCellSize - Math.floor((maxCells - 1) / 6);
+    cellSize = Math.max(minCellSize, cellSize);
+    
+    return cellSize;
 }
 
 // 确认自定义难度
