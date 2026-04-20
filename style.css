@@ -20,14 +20,48 @@ body {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     padding: 30px;
     text-align: center;
-    max-width: 400px;
-    width: 100%;
+    max-width: 100%;
+    width: fit-content;
+    min-width: 400px;
 }
 
 h1 {
     color: #333;
     margin-bottom: 20px;
     font-size: 28px;
+}
+
+.difficulty-selector {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.difficulty-selector label {
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.difficulty-selector select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.difficulty-selector select:hover {
+    border-color: #999;
+}
+
+.difficulty-selector select:focus {
+    outline: none;
+    border-color: #4CAF50;
 }
 
 .game-info {
@@ -73,28 +107,28 @@ h1 {
 
 .game-board {
     display: grid;
-    grid-template-columns: repeat(9, 1fr);
     gap: 2px;
     background-color: #ddd;
     padding: 2px;
     border-radius: 4px;
     margin: 20px auto;
     user-select: none;
+    width: fit-content;
 }
 
 .cell {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     background-color: #bdbdbd;
     border: 2px solid;
     border-color: #fff #999 #999 #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.1s;
+    transition: all 0.15s ease;
 }
 
 .cell:hover {
@@ -105,6 +139,22 @@ h1 {
     background-color: #e0e0e0;
     border: 1px solid #ccc;
     cursor: default;
+    animation: revealCell 0.2s ease;
+}
+
+@keyframes revealCell {
+    0% {
+        transform: scale(0.95);
+        background-color: #d5d5d5;
+    }
+    50% {
+        transform: scale(1.02);
+        background-color: #e8e8e8;
+    }
+    100% {
+        transform: scale(1);
+        background-color: #e0e0e0;
+    }
 }
 
 .cell.mine {
@@ -116,6 +166,26 @@ h1 {
     background-color: #ff0000;
     border: 2px solid #cc0000;
     box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    animation: mineExplode 0.5s ease;
+}
+
+@keyframes mineExplode {
+    0% {
+        transform: scale(1);
+        background-color: #ff4d4d;
+    }
+    30% {
+        transform: scale(1.2);
+        background-color: #ff0000;
+    }
+    60% {
+        transform: scale(1.1);
+        background-color: #ff0000;
+    }
+    100% {
+        transform: scale(1);
+        background-color: #ff0000;
+    }
 }
 
 .cell.flag {
@@ -124,14 +194,27 @@ h1 {
 
 .cell.flag::after {
     content: '🚩';
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .cell.wrong-flag {
     background-color: #ffcccc;
     border: 1px solid #ff9999;
     color: #ff0000;
-    font-size: 20px;
+    font-size: 18px;
+    animation: wrongFlag 0.5s ease;
+}
+
+@keyframes wrongFlag {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    20%, 60% {
+        transform: translateX(-3px);
+    }
+    40%, 80% {
+        transform: translateX(3px);
+    }
 }
 
 .cell[data-count="1"] { color: #0000ff; }
@@ -154,6 +237,18 @@ h1 {
 
 .game-message.show {
     display: block;
+    animation: messageShow 0.3s ease;
+}
+
+@keyframes messageShow {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .game-message.lose {
