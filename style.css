@@ -64,6 +64,79 @@ h1 {
     border-color: #4CAF50;
 }
 
+.custom-difficulty {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.custom-difficulty.hidden {
+    display: none;
+}
+
+.custom-input-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.custom-input-group label {
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.custom-input-group input {
+    width: 60px;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.custom-input-group input:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+#confirm-custom {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+#confirm-custom:hover {
+    background-color: #45a049;
+}
+
+.custom-error {
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px;
+    background-color: #ffdddd;
+    color: #d8000c;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.custom-error.hidden {
+    display: none;
+}
+
 .game-info {
     display: flex;
     justify-content: space-between;
