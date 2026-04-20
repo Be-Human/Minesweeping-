@@ -12,6 +12,8 @@ let timer = 0;
 let timerInterval = null;
 let flagsCount = 0;
 let firstClick = true;
+let clickedMineRow = -1;
+let clickedMineCol = -1;
 
 // DOM 元素
 const gameBoard = document.getElementById('game-board');
@@ -29,6 +31,8 @@ function initGame() {
     timer = 0;
     flagsCount = 0;
     firstClick = true;
+    clickedMineRow = -1;
+    clickedMineCol = -1;
     
     if (timerInterval) {
         clearInterval(timerInterval);
@@ -163,6 +167,9 @@ function handleRightClick(row, col) {
         cell.classList.remove('flag');
         flagsCount--;
     } else {
+        if (flagsCount >= MINES) {
+            return;
+        }
         board[row][col].isFlagged = true;
         cell.classList.add('flag');
         flagsCount++;
@@ -182,7 +189,9 @@ function revealCell(row, col) {
     cell.classList.add('revealed');
     
     if (board[row][col].isMine) {
-        cell.classList.add('mine');
+        clickedMineRow = row;
+        clickedMineCol = col;
+        cell.classList.add('mine', 'clicked-mine');
         cell.textContent = '💣';
         gameOver = true;
         endGame(false);
@@ -207,15 +216,29 @@ function getCellElement(row, col) {
     return gameBoard.children[row * COLS + col];
 }
 
-// 显示所有地雷位置
+// 显示所有地雷位置和标错的旗子
 function revealAllMines() {
     minePositions.forEach(pos => {
         const cell = getCellElement(pos.row, pos.col);
+        if (pos.row === clickedMineRow && pos.col === clickedMineCol) {
+            return;
+        }
         if (!board[pos.row][pos.col].isFlagged) {
             cell.classList.add('mine');
             cell.textContent = '💣';
         }
     });
+    
+    for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS; col++) {
+            if (board[row][col].isFlagged && !board[row][col].isMine) {
+                const cell = getCellElement(row, col);
+                cell.classList.remove('flag');
+                cell.classList.add('wrong-flag');
+                cell.textContent = '✗';
+            }
+        }
+    }
 }
 
 // 检查胜利条件
@@ -244,8 +267,22 @@ function endGame(win) {
         revealAllMines();
         showGameMessage('游戏失败！踩到地雷了。', false);
     } else {
+        autoFlagRemainingMines();
         showGameMessage('恭喜你，游戏胜利！', true);
     }
+}
+
+// 自动标记剩余未插旗的地雷
+function autoFlagRemainingMines() {
+    minePositions.forEach(pos => {
+        if (!board[pos.row][pos.col].isFlagged) {
+            const cell = getCellElement(pos.row, pos.col);
+            board[pos.row][pos.col].isFlagged = true;
+            cell.classList.add('flag');
+        }
+    });
+    flagsCount = MINES;
+    updateMineCount();
 }
 
 // 开始计时器
