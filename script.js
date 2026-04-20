@@ -178,6 +178,7 @@ function handleRightClick(row, col) {
     if (board[row][col].isFlagged) {
         board[row][col].isFlagged = false;
         cell.classList.remove('flag');
+        cell.style.fontSize = `${CELL_SIZE * 0.45}px`;
         flagsCount--;
     } else {
         if (flagsCount >= MINES) {
@@ -185,6 +186,7 @@ function handleRightClick(row, col) {
         }
         board[row][col].isFlagged = true;
         cell.classList.add('flag');
+        cell.style.fontSize = `${CELL_SIZE * 0.55}px`;
         flagsCount++;
     }
     
@@ -244,6 +246,7 @@ function revealAllMines() {
         if (!board[pos.row][pos.col].isFlagged) {
             cell.classList.add('mine');
             cell.textContent = '💣';
+            cell.style.fontSize = `${CELL_SIZE * 0.55}px`;
         }
     });
     
@@ -254,6 +257,7 @@ function revealAllMines() {
                 cell.classList.remove('flag');
                 cell.classList.add('wrong-flag');
                 cell.textContent = '✗';
+                cell.style.fontSize = `${CELL_SIZE * 0.65}px`;
             }
         }
     }
@@ -297,6 +301,7 @@ function autoFlagRemainingMines() {
             const cell = getCellElement(pos.row, pos.col);
             board[pos.row][pos.col].isFlagged = true;
             cell.classList.add('flag');
+            cell.style.fontSize = `${CELL_SIZE * 0.55}px`;
         }
     });
     flagsCount = MINES;
