@@ -112,6 +112,12 @@ h1 {
     border: 1px solid #ff3333;
 }
 
+.cell.clicked-mine {
+    background-color: #ff0000;
+    border: 2px solid #cc0000;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
 .cell.flag {
     position: relative;
 }
@@ -119,6 +125,13 @@ h1 {
 .cell.flag::after {
     content: '🚩';
     font-size: 16px;
+}
+
+.cell.wrong-flag {
+    background-color: #ffcccc;
+    border: 1px solid #ff9999;
+    color: #ff0000;
+    font-size: 20px;
 }
 
 .cell[data-count="1"] { color: #0000ff; }
