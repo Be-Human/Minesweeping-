@@ -1,0 +1,154 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 28px;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.label {
+    color: #666;
+    font-size: 14px;
+}
+
+.value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+#restart-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+#restart-btn:hover {
+    background-color: #45a049;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 2px;
+    background-color: #ddd;
+    padding: 2px;
+    border-radius: 4px;
+    margin: 20px auto;
+    user-select: none;
+}
+
+.cell {
+    width: 40px;
+    height: 40px;
+    background-color: #bdbdbd;
+    border: 2px solid;
+    border-color: #fff #999 #999 #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+.cell:hover {
+    background-color: #c9c9c9;
+}
+
+.cell.revealed {
+    background-color: #e0e0e0;
+    border: 1px solid #ccc;
+    cursor: default;
+}
+
+.cell.mine {
+    background-color: #ff4d4d;
+    border: 1px solid #ff3333;
+}
+
+.cell.flag {
+    position: relative;
+}
+
+.cell.flag::after {
+    content: '🚩';
+    font-size: 16px;
+}
+
+.cell[data-count="1"] { color: #0000ff; }
+.cell[data-count="2"] { color: #008000; }
+.cell[data-count="3"] { color: #ff0000; }
+.cell[data-count="4"] { color: #000080; }
+.cell[data-count="5"] { color: #800000; }
+.cell[data-count="6"] { color: #008080; }
+.cell[data-count="7"] { color: #000000; }
+.cell[data-count="8"] { color: #808080; }
+
+.game-message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    display: none;
+}
+
+.game-message.show {
+    display: block;
+}
+
+.game-message.lose {
+    background-color: #ffdddd;
+    color: #d8000c;
+}
+
+.game-message.win {
+    background-color: #ddffdd;
+    color: #4f8a10;
+}
