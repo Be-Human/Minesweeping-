@@ -30,6 +30,12 @@ const timerElement = document.getElementById('timer');
 const restartButton = document.getElementById('restart-btn');
 const gameMessage = document.getElementById('game-message');
 const difficultySelector = document.getElementById('difficulty');
+const customDifficulty = document.getElementById('custom-difficulty');
+const customRowsInput = document.getElementById('custom-rows');
+const customColsInput = document.getElementById('custom-cols');
+const customMinesInput = document.getElementById('custom-mines');
+const confirmCustomBtn = document.getElementById('confirm-custom');
+const customError = document.getElementById('custom-error');
 
 // 初始化游戏
 function initGame() {
@@ -349,6 +355,15 @@ function hideGameMessage() {
 
 // 切换难度
 function changeDifficulty(difficulty) {
+    hideCustomError();
+    
+    if (difficulty === 'custom') {
+        showCustomDifficulty();
+        return;
+    }
+    
+    hideCustomDifficulty();
+    
     const config = DIFFICULTIES[difficulty];
     ROWS = config.rows;
     COLS = config.cols;
@@ -363,11 +378,85 @@ function changeDifficulty(difficulty) {
     initGame();
 }
 
+// 显示自定义难度输入框
+function showCustomDifficulty() {
+    customDifficulty.classList.remove('hidden');
+}
+
+// 隐藏自定义难度输入框
+function hideCustomDifficulty() {
+    customDifficulty.classList.add('hidden');
+}
+
+// 显示自定义错误信息
+function showCustomError(message) {
+    customError.textContent = message;
+    customError.classList.remove('hidden');
+}
+
+// 隐藏自定义错误信息
+function hideCustomError() {
+    customError.classList.add('hidden');
+}
+
+// 计算格子尺寸（根据行列数动态调整）
+function calculateCellSize(rows, cols) {
+    const maxCells = Math.max(rows, cols);
+    if (maxCells <= 10) return 36;
+    if (maxCells <= 16) return 28;
+    if (maxCells <= 20) return 24;
+    if (maxCells <= 30) return 20;
+    return 16;
+}
+
+// 确认自定义难度
+function confirmCustomDifficulty() {
+    hideCustomError();
+    
+    const rows = parseInt(customRowsInput.value);
+    const cols = parseInt(customColsInput.value);
+    const mines = parseInt(customMinesInput.value);
+    
+    if (isNaN(rows) || rows < 1 || rows > 50) {
+        showCustomError('行数必须在 1-50 之间');
+        return;
+    }
+    
+    if (isNaN(cols) || cols < 1 || cols > 50) {
+        showCustomError('列数必须在 1-50 之间');
+        return;
+    }
+    
+    if (isNaN(mines) || mines < 1) {
+        showCustomError('地雷数必须大于 0');
+        return;
+    }
+    
+    const totalCells = rows * cols;
+    if (mines >= totalCells) {
+        showCustomError(`地雷数不能超过格子总数 (${totalCells - 1})`);
+        return;
+    }
+    
+    ROWS = rows;
+    COLS = cols;
+    MINES = mines;
+    CELL_SIZE = calculateCellSize(rows, cols);
+    
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    
+    initGame();
+}
+
 // 事件监听
 restartButton.addEventListener('click', initGame);
 difficultySelector.addEventListener('change', (e) => {
     changeDifficulty(e.target.value);
 });
+confirmCustomBtn.addEventListener('click', confirmCustomDifficulty);
 
 // 初始化游戏
 initGame();
