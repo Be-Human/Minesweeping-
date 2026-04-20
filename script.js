@@ -1,14 +1,15 @@
 // 难度配置
 const DIFFICULTIES = {
-    beginner: { rows: 9, cols: 9, mines: 10 },
-    intermediate: { rows: 16, cols: 16, mines: 40 },
-    expert: { rows: 16, cols: 30, mines: 99 }
+    beginner: { rows: 9, cols: 9, mines: 10, cellSize: 36 },
+    intermediate: { rows: 16, cols: 16, mines: 40, cellSize: 28 },
+    expert: { rows: 16, cols: 30, mines: 99, cellSize: 24 }
 };
 
 // 游戏配置
 let ROWS = DIFFICULTIES.beginner.rows;
 let COLS = DIFFICULTIES.beginner.cols;
 let MINES = DIFFICULTIES.beginner.mines;
+let CELL_SIZE = DIFFICULTIES.beginner.cellSize;
 
 // 游戏状态
 let board = [];
@@ -58,7 +59,7 @@ function initGame() {
 // 创建棋盘 DOM 结构
 function createBoard() {
     gameBoard.innerHTML = '';
-    gameBoard.style.gridTemplateColumns = `repeat(${COLS}, 1fr)`;
+    gameBoard.style.gridTemplateColumns = `repeat(${COLS}, ${CELL_SIZE}px)`;
     
     for (let row = 0; row < ROWS; row++) {
         for (let col = 0; col < COLS; col++) {
@@ -66,6 +67,9 @@ function createBoard() {
             cell.className = 'cell';
             cell.dataset.row = row;
             cell.dataset.col = col;
+            cell.style.width = `${CELL_SIZE}px`;
+            cell.style.height = `${CELL_SIZE}px`;
+            cell.style.fontSize = `${CELL_SIZE * 0.45}px`;
             
             cell.addEventListener('click', () => handleCellClick(row, col));
             cell.addEventListener('contextmenu', (e) => {
@@ -159,7 +163,7 @@ function handleCellClick(row, col) {
         startTimer();
     }
     
-    revealCell(row, col);
+    revealCell(row, col, true);
     checkWin();
 }
 
@@ -188,14 +192,19 @@ function handleRightClick(row, col) {
 }
 
 // 翻开格子
-function revealCell(row, col) {
+function revealCell(row, col, animate = false) {
     if (!isValidCell(row, col) || board[row][col].isRevealed || board[row][col].isFlagged) {
         return;
     }
     
     const cell = getCellElement(row, col);
     board[row][col].isRevealed = true;
-    cell.classList.add('revealed');
+    
+    if (animate) {
+        cell.classList.add('revealed', 'animated');
+    } else {
+        cell.classList.add('revealed');
+    }
     
     if (board[row][col].isMine) {
         clickedMineRow = row;
@@ -214,7 +223,7 @@ function revealCell(row, col) {
         for (let dr = -1; dr <= 1; dr++) {
             for (let dc = -1; dc <= 1; dc++) {
                 if (dr === 0 && dc === 0) continue;
-                revealCell(row + dr, col + dc);
+                revealCell(row + dr, col + dc, false);
             }
         }
     }
@@ -339,6 +348,7 @@ function changeDifficulty(difficulty) {
     ROWS = config.rows;
     COLS = config.cols;
     MINES = config.mines;
+    CELL_SIZE = config.cellSize;
     
     if (timerInterval) {
         clearInterval(timerInterval);
