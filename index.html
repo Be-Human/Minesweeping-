@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扫雷游戏</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>扫雷游戏</h1>
+        
+        <div class="game-info">
+            <div class="info-item">
+                <span class="label">剩余地雷:</span>
+                <span id="mine-count" class="value">10</span>
+            </div>
+            <div class="info-item">
+                <span class="label">用时:</span>
+                <span id="timer" class="value">0</span>
+                <span class="label">秒</span>
+            </div>
+            <button id="restart-btn">重新开始</button>
+        </div>
+        
+        <div id="game-board" class="game-board">
+            <!-- 棋盘将通过JavaScript动态生成 -->
+        </div>
+        
+        <div id="game-message" class="game-message"></div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
