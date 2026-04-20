@@ -1,7 +1,14 @@
+// 难度配置
+const DIFFICULTIES = {
+    beginner: { rows: 9, cols: 9, mines: 10 },
+    intermediate: { rows: 16, cols: 16, mines: 40 },
+    expert: { rows: 16, cols: 30, mines: 99 }
+};
+
 // 游戏配置
-const ROWS = 9;
-const COLS = 9;
-const MINES = 10;
+let ROWS = DIFFICULTIES.beginner.rows;
+let COLS = DIFFICULTIES.beginner.cols;
+let MINES = DIFFICULTIES.beginner.mines;
 
 // 游戏状态
 let board = [];
@@ -21,6 +28,7 @@ const mineCountElement = document.getElementById('mine-count');
 const timerElement = document.getElementById('timer');
 const restartButton = document.getElementById('restart-btn');
 const gameMessage = document.getElementById('game-message');
+const difficultySelector = document.getElementById('difficulty');
 
 // 初始化游戏
 function initGame() {
@@ -50,6 +58,7 @@ function initGame() {
 // 创建棋盘 DOM 结构
 function createBoard() {
     gameBoard.innerHTML = '';
+    gameBoard.style.gridTemplateColumns = `repeat(${COLS}, 1fr)`;
     
     for (let row = 0; row < ROWS; row++) {
         for (let col = 0; col < COLS; col++) {
@@ -324,8 +333,26 @@ function hideGameMessage() {
     gameMessage.classList.remove('show');
 }
 
+// 切换难度
+function changeDifficulty(difficulty) {
+    const config = DIFFICULTIES[difficulty];
+    ROWS = config.rows;
+    COLS = config.cols;
+    MINES = config.mines;
+    
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    
+    initGame();
+}
+
 // 事件监听
 restartButton.addEventListener('click', initGame);
+difficultySelector.addEventListener('change', (e) => {
+    changeDifficulty(e.target.value);
+});
 
 // 初始化游戏
 initGame();
