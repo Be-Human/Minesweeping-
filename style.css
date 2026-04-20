@@ -195,14 +195,12 @@ h1 {
 
 .cell.flag::after {
     content: '🚩';
-    font-size: 14px;
 }
 
 .cell.wrong-flag {
     background-color: #ffcccc;
     border: 1px solid #ff9999;
     color: #ff0000;
-    font-size: 18px;
     animation: wrongFlag 0.5s ease;
 }
 
@@ -260,4 +258,34 @@ h1 {
 .game-message.win {
     background-color: #ddffdd;
     color: #4f8a10;
+}
+
+.game-instructions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    color: #666;
+    font-size: 14px;
+}
+
+.instruction-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.instruction-divider {
+    color: #ccc;
+}
+
+.key {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-weight: bold;
+    color: #333;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
