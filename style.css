@@ -117,18 +117,16 @@ h1 {
 }
 
 .cell {
-    width: 30px;
-    height: 30px;
     background-color: #bdbdbd;
     border: 2px solid;
     border-color: #fff #999 #999 #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease;
+    box-sizing: border-box;
 }
 
 .cell:hover {
@@ -139,6 +137,9 @@ h1 {
     background-color: #e0e0e0;
     border: 1px solid #ccc;
     cursor: default;
+}
+
+.cell.revealed.animated {
     animation: revealCell 0.2s ease;
 }
 
