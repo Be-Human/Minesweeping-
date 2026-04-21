@@ -205,6 +205,9 @@ h1 {
     font-size: 20px;
     font-weight: bold;
     color: #2c3e50;
+    min-width: 50px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
 }
 
 #restart-btn {
@@ -365,14 +368,23 @@ h1 {
 .cell[data-count="8"] { color: #808080; }
 
 .game-message {
-    margin-top: 20px;
-    padding: 18px 24px;
-    border-radius: 14px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    padding: 24px 32px;
+    border-radius: 16px;
     font-size: 16px;
     font-weight: bold;
     display: none;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(0, 0, 0, 0.1);
     border: 2px solid;
+    min-width: 280px;
+    max-width: 90%;
+    backdrop-filter: blur(8px);
 }
 
 .game-message.show {
@@ -383,11 +395,11 @@ h1 {
 @keyframes messageShow {
     0% {
         opacity: 0;
-        transform: translateY(-15px) scale(0.95);
+        transform: translate(-50%, -50%) scale(0.9);
     }
     100% {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translate(-50%, -50%) scale(1);
     }
 }
 
@@ -633,6 +645,15 @@ body.dark-theme {
     border-color: #f87171;
     color: #dc2626;
 }
+
+.dark-theme .cell[data-count="1"] { color: #60a5fa; }
+.dark-theme .cell[data-count="2"] { color: #4ade80; }
+.dark-theme .cell[data-count="3"] { color: #f87171; }
+.dark-theme .cell[data-count="4"] { color: #a78bfa; }
+.dark-theme .cell[data-count="5"] { color: #fb923c; }
+.dark-theme .cell[data-count="6"] { color: #67e8f9; }
+.dark-theme .cell[data-count="7"] { color: #f1f5f9; }
+.dark-theme .cell[data-count="8"] { color: #94a3b8; }
 
 .dark-theme .game-message.lose {
     background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
