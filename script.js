@@ -29,6 +29,77 @@ let clickedMineCol = -1;
 // localStorage 键名
 const BEST_TIMES_KEY = 'minesweeper_best_times';
 const THEME_KEY = 'minesweeper_theme';
+const GAME_STATS_KEY = 'minesweeper_game_stats';
+
+// 获取游戏统计
+function getGameStats() {
+    const stored = localStorage.getItem(GAME_STATS_KEY);
+    if (stored) {
+        return JSON.parse(stored);
+    }
+    return {
+        beginner: { games: 0, wins: 0 },
+        intermediate: { games: 0, wins: 0 },
+        expert: { games: 0, wins: 0 },
+        custom: { games: 0, wins: 0 }
+    };
+}
+
+// 保存游戏统计
+function saveGameStats(stats) {
+    localStorage.setItem(GAME_STATS_KEY, JSON.stringify(stats));
+}
+
+// 更新游戏统计
+function updateGameStats(difficulty, win) {
+    const stats = getGameStats();
+    const key = difficulty;
+    
+    if (stats[key]) {
+        stats[key].games++;
+        if (win) {
+            stats[key].wins++;
+        }
+        saveGameStats(stats);
+    }
+    
+    updateStatsDisplay();
+}
+
+// 清空游戏统计
+function clearGameStats() {
+    const stats = {
+        beginner: { games: 0, wins: 0 },
+        intermediate: { games: 0, wins: 0 },
+        expert: { games: 0, wins: 0 },
+        custom: { games: 0, wins: 0 }
+    };
+    saveGameStats(stats);
+    updateStatsDisplay();
+}
+
+// 计算胜率
+function calculateWinRate(games, wins) {
+    if (games === 0) return '-';
+    return ((wins / games) * 100).toFixed(1) + '%';
+}
+
+// 更新统计显示
+function updateStatsDisplay() {
+    const stats = getGameStats();
+    const difficulties = ['beginner', 'intermediate', 'expert', 'custom'];
+    
+    difficulties.forEach(difficulty => {
+        const stat = stats[difficulty];
+        const gamesElement = document.getElementById(`${difficulty}-games`);
+        const winsElement = document.getElementById(`${difficulty}-wins`);
+        const winrateElement = document.getElementById(`${difficulty}-winrate`);
+        
+        if (gamesElement) gamesElement.textContent = stat.games;
+        if (winsElement) winsElement.textContent = stat.wins;
+        if (winrateElement) winrateElement.textContent = calculateWinRate(stat.games, stat.wins);
+    });
+}
 
 // 获取最佳成绩
 function getBestTimes() {
@@ -240,7 +311,7 @@ function isValidCell(row, col) {
 
 // 处理左键点击
 function handleCellClick(row, col) {
-    if (gameOver || gameWon || board[row][col].isFlagged || board[row][col].isRevealed) {
+    if (gameOver || gameWon || board[row][col].isFlagged) {
         return;
     }
     
@@ -250,8 +321,65 @@ function handleCellClick(row, col) {
         startTimer();
     }
     
+    if (board[row][col].isRevealed) {
+        if (board[row][col].adjacentMines > 0) {
+            const flagCount = countAdjacentFlags(row, col);
+            if (flagCount === board[row][col].adjacentMines) {
+                chordClick(row, col);
+            }
+        }
+        return;
+    }
+    
     revealCell(row, col, true);
     checkWin();
+}
+
+// 计算周围插旗数量
+function countAdjacentFlags(row, col) {
+    let count = 0;
+    
+    for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+            if (dr === 0 && dc === 0) continue;
+            
+            const newRow = row + dr;
+            const newCol = col + dc;
+            
+            if (isValidCell(newRow, newCol) && board[newRow][newCol].isFlagged) {
+                count++;
+            }
+        }
+    }
+    
+    return count;
+}
+
+// 和弦点击：翻开周围未标记的格子
+function chordClick(row, col) {
+    let hitMine = false;
+    
+    for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+            if (dr === 0 && dc === 0) continue;
+            
+            const newRow = row + dr;
+            const newCol = col + dc;
+            
+            if (isValidCell(newRow, newCol) && 
+                !board[newRow][newCol].isFlagged && 
+                !board[newRow][newCol].isRevealed) {
+                revealCell(newRow, newCol, true);
+                if (board[newRow][newCol].isMine) {
+                    hitMine = true;
+                }
+            }
+        }
+    }
+    
+    if (!hitMine) {
+        checkWin();
+    }
 }
 
 // 处理右键点击（标记/取消旗子）
@@ -371,6 +499,8 @@ function checkWin() {
 // 结束游戏
 function endGame(win) {
     stopTimer();
+    
+    updateGameStats(currentDifficulty, win);
     
     if (!win) {
         revealAllMines();
@@ -583,8 +713,20 @@ difficultySelector.addEventListener('change', (e) => {
 confirmCustomBtn.addEventListener('click', confirmCustomDifficulty);
 themeToggle.addEventListener('click', toggleTheme);
 
+const clearStatsBtn = document.getElementById('clear-stats-btn');
+if (clearStatsBtn) {
+    clearStatsBtn.addEventListener('click', () => {
+        if (confirm('确定要清空所有游戏统计吗？')) {
+            clearGameStats();
+        }
+    });
+}
+
 // 初始化主题
 applyTheme(getTheme());
+
+// 初始化统计显示
+updateStatsDisplay();
 
 // 初始化游戏
 initGame();
