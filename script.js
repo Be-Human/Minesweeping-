@@ -357,7 +357,8 @@ function countAdjacentFlags(row, col) {
 
 // 和弦点击：翻开周围未标记的格子
 function chordClick(row, col) {
-    let hitMine = false;
+    const initialGameOver = gameOver;
+    const initialGameWon = gameWon;
     
     for (let dr = -1; dr <= 1; dr++) {
         for (let dc = -1; dc <= 1; dc++) {
@@ -370,14 +371,11 @@ function chordClick(row, col) {
                 !board[newRow][newCol].isFlagged && 
                 !board[newRow][newCol].isRevealed) {
                 revealCell(newRow, newCol, true);
-                if (board[newRow][newCol].isMine) {
-                    hitMine = true;
-                }
             }
         }
     }
     
-    if (!hitMine) {
+    if (!initialGameOver && !initialGameWon && !gameOver && !gameWon) {
         checkWin();
     }
 }
@@ -410,7 +408,7 @@ function handleRightClick(row, col) {
 
 // 翻开格子
 function revealCell(row, col, animate = false) {
-    if (!isValidCell(row, col) || board[row][col].isRevealed || board[row][col].isFlagged) {
+    if (gameOver || gameWon || !isValidCell(row, col) || board[row][col].isRevealed || board[row][col].isFlagged) {
         return;
     }
     
@@ -424,10 +422,16 @@ function revealCell(row, col, animate = false) {
     }
     
     if (board[row][col].isMine) {
-        clickedMineRow = row;
-        clickedMineCol = col;
-        cell.classList.add('mine', 'clicked-mine');
-        cell.textContent = '💣';
+        if (clickedMineRow === -1 && clickedMineCol === -1) {
+            clickedMineRow = row;
+            clickedMineCol = col;
+            cell.classList.add('mine', 'clicked-mine');
+            cell.textContent = '💣';
+        } else {
+            cell.classList.add('mine');
+            cell.textContent = '💣';
+            cell.style.fontSize = `${CELL_SIZE * 0.55}px`;
+        }
         gameOver = true;
         endGame(false);
         return;
