@@ -69,6 +69,48 @@
                 <span class="key">右键</span>
                 <span class="action">标记/取消旗子</span>
             </div>
+            <div class="instruction-divider">|</div>
+            <div class="instruction-item">
+                <span class="key">左键数字</span>
+                <span class="action">和弦点击</span>
+            </div>
+        </div>
+        
+        <div class="game-stats">
+            <h3>游戏统计</h3>
+            <div class="stats-container">
+                <div class="stats-row">
+                    <div class="stats-label">难度</div>
+                    <div class="stats-value">总局数</div>
+                    <div class="stats-value">胜局</div>
+                    <div class="stats-value">胜率</div>
+                </div>
+                <div class="stats-row" id="stats-beginner">
+                    <div class="stats-label">初级</div>
+                    <div class="stats-value" id="beginner-games">-</div>
+                    <div class="stats-value" id="beginner-wins">-</div>
+                    <div class="stats-value" id="beginner-winrate">-</div>
+                </div>
+                <div class="stats-row" id="stats-intermediate">
+                    <div class="stats-label">中级</div>
+                    <div class="stats-value" id="intermediate-games">-</div>
+                    <div class="stats-value" id="intermediate-wins">-</div>
+                    <div class="stats-value" id="intermediate-winrate">-</div>
+                </div>
+                <div class="stats-row" id="stats-expert">
+                    <div class="stats-label">高级</div>
+                    <div class="stats-value" id="expert-games">-</div>
+                    <div class="stats-value" id="expert-wins">-</div>
+                    <div class="stats-value" id="expert-winrate">-</div>
+                </div>
+                <div class="stats-row" id="stats-custom">
+                    <div class="stats-label">自定义</div>
+                    <div class="stats-value" id="custom-games">-</div>
+                    <div class="stats-value" id="custom-wins">-</div>
+                    <div class="stats-value" id="custom-winrate">-</div>
+                </div>
+            </div>
+            <button id="clear-stats-btn" class="clear-stats-btn">清空统计</button>
         </div>
     </div>
     
