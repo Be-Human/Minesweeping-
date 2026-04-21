@@ -11,6 +11,9 @@ let COLS = DIFFICULTIES.beginner.cols;
 let MINES = DIFFICULTIES.beginner.mines;
 let CELL_SIZE = DIFFICULTIES.beginner.cellSize;
 
+// 当前难度
+let currentDifficulty = 'beginner';
+
 // 游戏状态
 let board = [];
 let minePositions = [];
@@ -22,6 +25,53 @@ let flagsCount = 0;
 let firstClick = true;
 let clickedMineRow = -1;
 let clickedMineCol = -1;
+
+// localStorage 键名
+const BEST_TIMES_KEY = 'minesweeper_best_times';
+const THEME_KEY = 'minesweeper_theme';
+
+// 获取最佳成绩
+function getBestTimes() {
+    const stored = localStorage.getItem(BEST_TIMES_KEY);
+    if (stored) {
+        return JSON.parse(stored);
+    }
+    return {
+        beginner: null,
+        intermediate: null,
+        expert: null
+    };
+}
+
+// 保存最佳成绩
+function saveBestTimes(times) {
+    localStorage.setItem(BEST_TIMES_KEY, JSON.stringify(times));
+}
+
+// 检查并更新最佳成绩
+function checkAndUpdateBestTime(difficulty, time) {
+    if (difficulty === 'custom') {
+        return { isNewRecord: false };
+    }
+    
+    const bestTimes = getBestTimes();
+    const currentBest = bestTimes[difficulty];
+    
+    if (currentBest === null || time < currentBest) {
+        const wasRecord = currentBest !== null;
+        bestTimes[difficulty] = time;
+        saveBestTimes(bestTimes);
+        return { 
+            isNewRecord: true, 
+            previousBest: wasRecord ? currentBest : null 
+        };
+    }
+    
+    return { 
+        isNewRecord: false, 
+        previousBest: currentBest 
+    };
+}
 
 // DOM 元素
 const gameBoard = document.getElementById('game-board');
@@ -36,6 +86,37 @@ const customColsInput = document.getElementById('custom-cols');
 const customMinesInput = document.getElementById('custom-mines');
 const confirmCustomBtn = document.getElementById('confirm-custom');
 const customError = document.getElementById('custom-error');
+const themeToggle = document.getElementById('theme-toggle');
+const themeIcon = themeToggle.querySelector('.theme-icon');
+
+// 获取主题
+function getTheme() {
+    return localStorage.getItem(THEME_KEY) || 'light';
+}
+
+// 保存主题
+function saveTheme(theme) {
+    localStorage.setItem(THEME_KEY, theme);
+}
+
+// 应用主题
+function applyTheme(theme) {
+    if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeIcon.textContent = '☀️';
+    } else {
+        document.body.classList.remove('dark-theme');
+        themeIcon.textContent = '🌙';
+    }
+}
+
+// 切换主题
+function toggleTheme() {
+    const currentTheme = getTheme();
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    saveTheme(newTheme);
+    applyTheme(newTheme);
+}
 
 // 初始化游戏
 function initGame() {
@@ -296,7 +377,8 @@ function endGame(win) {
         showGameMessage('游戏失败！踩到地雷了。', false);
     } else {
         autoFlagRemainingMines();
-        showGameMessage('恭喜你，游戏胜利！', true);
+        const recordInfo = checkAndUpdateBestTime(currentDifficulty, timer);
+        showGameMessage('恭喜你，游戏胜利！', true, timer, recordInfo);
     }
 }
 
@@ -341,11 +423,37 @@ function updateTimer() {
 }
 
 // 显示游戏消息
-function showGameMessage(message, isWin) {
-    gameMessage.textContent = message;
+function showGameMessage(message, isWin, currentTime = null, recordInfo = null) {
     gameMessage.classList.add('show');
     gameMessage.classList.remove('win', 'lose');
     gameMessage.classList.add(isWin ? 'win' : 'lose');
+    
+    if (isWin && currentTime !== null) {
+        let html = `<div class="win-main">${message}</div>`;
+        html += `<div class="win-time">本次用时: <span class="time-value">${currentTime}</span> 秒</div>`;
+        
+        if (currentDifficulty !== 'custom') {
+            const bestTimes = getBestTimes();
+            const bestTime = bestTimes[currentDifficulty];
+            if (bestTime !== null) {
+                html += `<div class="win-best">当前最佳: <span class="time-value">${bestTime}</span> 秒</div>`;
+            }
+        }
+        
+        if (recordInfo && recordInfo.isNewRecord) {
+            if (recordInfo.previousBest !== null) {
+                html += `<div class="new-record">🎊 新纪录！比之前快了 ${recordInfo.previousBest - currentTime} 秒！</div>`;
+            } else {
+                html += `<div class="new-record">🎊 新纪录！这是你第一次完成该难度！</div>`;
+            }
+        } else if (currentDifficulty === 'custom') {
+            html += `<div class="custom-note">自定义难度不计入最佳成绩</div>`;
+        }
+        
+        gameMessage.innerHTML = html;
+    } else {
+        gameMessage.textContent = message;
+    }
 }
 
 // 隐藏游戏消息
@@ -356,6 +464,8 @@ function hideGameMessage() {
 // 切换难度
 function changeDifficulty(difficulty) {
     hideCustomError();
+    
+    currentDifficulty = difficulty;
     
     if (difficulty === 'custom') {
         showCustomDifficulty();
@@ -451,6 +561,7 @@ function confirmCustomDifficulty() {
         return;
     }
     
+    currentDifficulty = 'custom';
     ROWS = rows;
     COLS = cols;
     MINES = mines;
@@ -470,6 +581,10 @@ difficultySelector.addEventListener('change', (e) => {
     changeDifficulty(e.target.value);
 });
 confirmCustomBtn.addEventListener('click', confirmCustomDifficulty);
+themeToggle.addEventListener('click', toggleTheme);
+
+// 初始化主题
+applyTheme(getTheme());
 
 // 初始化游戏
 initGame();
